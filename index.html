@@ -1,0 +1,595 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I am so sorry, my love... 🥺</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #e2daf0, #f7d6da, #fff5f6, #ece3f5);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            perspective: 1000px;
+            transition: background 1.2s ease;
+        }
+
+        /* Soft blurred ambient light elements */
+        .ambient-glow {
+            position: absolute;
+            background: radial-gradient(circle, rgba(147, 112, 219, 0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .glow1 { width: 450px; height: 450px; top: -15%; left: -10%; }
+        .glow2 { width: 500px; height: 500px; bottom: -15%; right: -10%; }
+
+        /* CINEMATIC ENVELOPE CURTAIN SLIDE OVERLAY */
+        #curtain-wrapper {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 1000; display: flex; justify-content: center; align-items: center;
+        }
+        .curtain-panel {
+            position: absolute; top: 0; width: 50vw; height: 100vh;
+            background: linear-gradient(135deg, #3c1670, #5c2596, #7a3cb5);
+            box-shadow: 0 0 40px rgba(0,0,0,0.35);
+            transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 1001;
+        }
+        .curtain-left { left: 0; transform-origin: left; }
+        .curtain-right { right: 0; transform-origin: right; }
+        #curtain-wrapper.open .curtain-left { transform: translateX(-100%); }
+        #curtain-wrapper.open .curtain-right { transform: translateX(100%); }
+        
+        .envelope-btn {
+            position: relative; z-index: 1002; 
+            background: #ffffff;
+            padding: 24px 45px; border-radius: 24px; cursor: pointer; 
+            box-shadow: 0 15px 35px rgba(92, 37, 150, 0.15);
+            text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .envelope-btn:hover { transform: scale(1.04); box-shadow: 0 20px 45px rgba(92, 37, 150, 0.25); }
+        .envelope-btn h2 { font-family: 'Dancing Script', cursive; color: #5c2596; font-size: 2.2rem; }
+
+        /* Main Glassmorphism Frame Container */
+        .container {
+            position: relative; width: 90%; max-width: 410px; height: 78vh;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 36px; 
+            box-shadow: 0 30px 60px rgba(122, 60, 181, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.5); 
+            overflow: hidden; padding: 35px 30px; z-index: 10; 
+            transform-style: preserve-3d; transition: transform 0.1s ease-out;
+            display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px 25px; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; transition: all 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0; visibility: hidden; transform: translateX(100%); pointer-events: none;
+        }
+        .page.active { opacity: 1; visibility: visible; transform: translateX(0); pointer-events: auto; }
+        .page.exit { opacity: 0; visibility: hidden; transform: translateX(-100%); }
+
+        h1, h3 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #3c1670;
+            letter-spacing: -0.3px;
+        }
+        p { color: #5a606b; font-size: 0.9rem; line-height: 1.6; }
+
+        /* Action Buttons */
+        .btn {
+            background: linear-gradient(135deg, #5c2596, #7a3cb5); color: white; border: none;
+            padding: 13px 40px; font-size: 0.9rem; font-weight: 600; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 8px 20px rgba(92, 37, 150, 0.2);
+            transition: all 0.3s ease; margin-top: auto; flex-shrink: 0;
+            letter-spacing: 0.3px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(92, 37, 150, 0.3); }
+        .btn:disabled { background: #e0e0e0; box-shadow: none; cursor: not-allowed; transform: none; color: #a8a8a8; }
+
+        /* MOOD TRACKER BUTTONS */
+        .mood-box { display: flex; gap: 15px; margin: 20px 0; }
+        .mood-btn { background: #ffffff; border: 1px solid #e1bee7; font-size: 2rem; padding: 10px 20px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .mood-btn:hover { transform: scale(1.1); background: #fbf9fe; }
+        #mood-response { min-height: 25px; font-weight: 500; color: #5c2596; font-size: 0.9rem; margin-top: 5px; }
+
+        /* APOLOGY COUNTER TIMER */
+        .timer-container { display: flex; gap: 10px; margin: 25px 0; }
+        .timer-box { 
+            background: #ffffff; padding: 12px 10px; border-radius: 18px; min-width: 66px; 
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+        .timer-num { font-size: 1.3rem; font-weight: 600; color: #5c2596; }
+        .timer-label { font-size: 0.6rem; color: #8c94a0; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;}
+
+        /* SCRATCH AREA */
+        .scratch-container { position: relative; width: 290px; height: 180px; margin: 15px 0; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.04); overflow: hidden; flex-shrink: 0; background: #faf9ff; }
+        .scratch-secret { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 20px; z-index: 1; }
+        .shayari-text { font-style: italic; font-size: 0.95rem; color: #4e1a8a; line-height: 1.6; font-weight: 500; text-align: center; width: 100%; }
+        #scratch-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; z-index: 2; display: block; }
+
+        /* ENLARGED MEMORY SLIDER BOX */
+        .gallery-container { width: 100%; height: 350px; position: relative; overflow: hidden; border-radius: 22px; box-shadow: 0 12px 30px rgba(0,0,0,0.06); flex-shrink: 0; background: #eaeaea; border: 4px solid white; }
+        .photo-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s ease-in-out; }
+        .photo-slide.show { opacity: 1; }
+
+        /* RE-ARRANGED CLEAN TIMELINE VOW TRACKER */
+        .vow-timeline { display: flex; flex-direction: column; gap: 14px; width: 100%; margin: 20px 0; text-align: left; }
+        .vow-row { display: flex; align-items: center; background: #ffffff; padding: 12px 16px; border-radius: 18px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid transparent; }
+        .vow-row.revealed { background: #faf6ff; border-color: #d1c4e9; }
+        .vow-btn { font-size: 1.3rem; margin-right: 15px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; transition: transform 0.2s; }
+        .vow-row.revealed .vow-btn { transform: scale(1.15); }
+        .vow-text { font-size: 0.85rem; font-weight: 500; color: #7f8590; transition: color 0.3s ease; line-height: 1.4; }
+        .vow-row.revealed .vow-text { color: #3c1670; }
+
+        /* TRUCE QUESTION OPTIONS */
+        .quiz-option { width: 100%; background: #ffffff; padding: 14px 18px; border: 1px solid #e1bee7; border-radius: 16px; margin: 10px 0; cursor: pointer; transition: all 0.25s; font-size: 0.88rem; text-align: center; font-weight: 500; color: #5c2596; box-shadow: 0 4px 10px rgba(0,0,0,0.01); }
+        .quiz-option:hover { background: #f6effb; transform: translateY(-1px); }
+        #quiz-feedback { font-size: 0.85rem; font-weight: 600; margin-top: 10px; min-height: 22px; }
+
+        /* THAW GAUGE METER CLICKER */
+        .clicker-heart { font-size: 5.5rem; cursor: pointer; transition: transform 0.05s ease; margin: 20px 0; filter: drop-shadow(0 10px 20px rgba(92,37,150,0.15)); }
+        .clicker-heart:active { transform: scale(0.9); }
+        .floating-score { position: absolute; font-weight: bold; color: #7a3cb5; pointer-events: none; animation: floatUpScore 0.8s ease-out forwards; font-size: 1.1rem; }
+        .progress-bar-bg { width: 85%; height: 8px; background: #e2e2e2; border-radius: 10px; overflow: hidden; margin-top: 15px; }
+        .progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, #5c2596, #9b5de5); transition: width 0.2s ease; }
+
+        /* CONTRACT CARD STYLES */
+        .contract-box { position: relative; background: #ffffff; border-radius: 22px; padding: 15px; width: 100%; font-size: 0.8rem; text-align: left; line-height: 1.5; color: #444; margin-top: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.01); }
+        #sig-canvas { background: #fbfaff; border: 1px solid #e1bee7; border-radius: 14px; margin-top: 8px; cursor: signature; display: block; width: 100%; height: 65px; }
+        .sig-controls { width: 100%; display: flex; justify-content: flex-end; margin-top: 4px; }
+        .clear-btn { background: none; border: none; color: #5c2596; font-size: 0.75rem; font-weight: 600; cursor: pointer; text-decoration: underline; }
+
+        /* DIGITAL TRUCE STAMP SEAL HOOKS */
+        .truce-seal {
+            position: absolute; top: 20%; left: 25%; width: 120px; height: 120px;
+            border: 4px dashed #d90429; color: #d90429; border-radius: 50%;
+            display: none; justify-content: center; align-items: center;
+            font-weight: bold; font-size: 1rem; text-transform: uppercase;
+            transform: rotate(-15deg) scale(2); opacity: 0; pointer-events: none;
+            font-family: monospace; z-index: 50; background: rgba(255, 255, 255, 0.85);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.5);
+        }
+        .truce-seal.stamped { display: flex; opacity: 0.85; transform: rotate(-20deg) scale(1); }
+
+        /* CUSTOM SUCCESS/WARNING POPUP WINDOW MODALS */
+        #custom-popup-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(59, 29, 94, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            z-index: 2000; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .popup-card {
+            background: rgba(255, 255, 255, 0.9); padding: 30px; border-radius: 28px;
+            width: 85%; max-width: 350px; text-align: center;
+            box-shadow: 0 20px 50px rgba(92, 37, 150, 0.2);
+            border: 1px solid rgba(255,255,255,0.6);
+            transform: scale(0.85); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #custom-popup-overlay.show { opacity: 1; display: flex; }
+        #custom-popup-overlay.show .popup-card { transform: scale(1); }
+        .popup-card h2 { color: #5c2596; font-size: 1.6rem; margin-bottom: 10px; font-family: 'Dancing Script', cursive; }
+        .popup-card p { font-size: 0.88rem; color: #555; margin-bottom: 20px; line-height: 1.5; }
+
+        /* SURPRISE HAPPY PHOTO POPUP MODAL FRAME */
+        #surprise-photo-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            z-index: 1500; display: none; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 1s ease;
+        }
+        #surprise-photo-container.show { opacity: 1; display: flex; }
+        .surprise-frame {
+            position: relative; width: 85%; max-width: 360px; height: auto;
+            border-radius: 30px; background: #fff; padding: 15px;
+            box-shadow: 0 25px 60px rgba(123, 31, 162, 0.15);
+            border: 5px solid white; transform: scale(0.7); transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        }
+        #surprise-photo-container.show .surprise-frame { transform: scale(1); }
+        
+        .happy-photo {
+            width: 100%; height: 100%; object-fit: cover; border-radius: 20px;
+            clip-path: path("M231.33 46c26.17-26.17 68.59-26.17 94.75 0 26.17 26.17 26.17 68.59 0 94.76L184.2 282.66c-1.8 1.8-4.73 1.8-6.53 0L35.79 140.76c-26.17-26.17-26.17-68.59 0-94.76 26.16-26.17 68.58-26.17 94.75 0l46.12 46.12L231.33 46Z");
+        }
+
+        /* VOUCHERS CONTAINER LIST */
+        .coupon-deck { display: flex; gap: 8px; width: 100%; margin-top: 8px; }
+        .love-coupon { background: #ffffff; border: 1px solid #e2daf0; border-radius: 12px; padding: 6px; flex: 1; font-size: 0.65rem; text-align: center; color: #5c2596; font-weight: 600; }
+
+        /* TYPING BOX ELEMENTS */
+        .final-wish h2 { font-family: 'Dancing Script', cursive; font-size: 2.4rem; color: #3c1670; margin-bottom: 5px; }
+        .typewriter-box { min-height: 50px; color: #333; font-size: 0.84rem; line-height: 1.4; font-weight: 500; }
+        .cursor { display: inline-block; width: 2px; background-color: #5c2596; animation: blink 0.7s infinite; }
+
+        /* Keyframes */
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes blink { 50% { opacity: 0; } }
+        .flying-element { position: absolute; bottom: -50px; pointer-events: none; animation: flyUp 4.5s linear infinite; z-index: 100; }
+        @keyframes flyUp {
+            0% { transform: translateY(0) translateX(0) rotate(0deg) scale(0.6); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: translateY(-115vh) translateX(var(--randomX)) rotate(var(--randomRotate)) scale(1.2); opacity: 0; }
+        }
+        @keyframes floatUpScore { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.15); } }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow glow1"></div>
+    <div class="ambient-glow glow2"></div>
+
+    <div id="curtain-wrapper">
+        <div class="curtain-panel curtain-left"></div>
+        <div class="envelope-btn" onclick="openCurtains()">
+            <h2>For Ayushi... 💌</h2>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 5px; font-weight: 500;">Please click to open your surprise</p>
+        </div>
+        <div class="curtain-panel curtain-right"></div>
+    </div>
+
+    <div id="custom-popup-overlay" onclick="closeCustomPopup()">
+        <div class="popup-card" onclick="event.stopPropagation()">
+            <h2 id="popup-title">Truce Sealed For Eternity! ❤️</h2>
+            <p id="popup-desc">Your official signature has been securely submitted to my heart database. Your virtual reward coupons are now active in real life, Ayushi!</p>
+            <button class="btn" style="margin: 0; background: linear-gradient(135deg, #3c1670, #5c2596);" onclick="closeCustomPopup()">Got it 🔒</button>
+        </div>
+    </div>
+
+    <div id="surprise-photo-container">
+        <div class="surprise-frame">
+            <img src="Ayushi.jpeg" class="happy-photo" alt="My Happy Place">
+        </div>
+    </div>
+
+    <div class="container" id="main-card">
+        
+        <div class="page active" id="page0">
+            <h3>How is my Ayushi right now? 🥺</h3>
+            <p style="margin-top: 5px; font-size: 0.85rem;">Be completely honest with me...</p>
+            <div class="mood-box">
+                <button class="mood-btn" onclick="trackMood('angry')">😡</button>
+                <button class="mood-btn" onclick="trackMood('sad')">🥺</button>
+                <button class="mood-btn" onclick="trackMood('ready')">❤️</button>
+            </div>
+            <div id="mood-response"></div>
+            <button class="btn" id="mood-next-btn" onclick="goToPage(0, 1)" style="display: none;">Enter Vault ➔</button>
+        </div>
+
+        <div class="page" id="page1">
+            <h3 style="font-size: 1.4rem;">I Am Deeply Sorry...</h3>
+            <p style="margin-top: 5px;">It broke my heart to cause any negative distance or misunderstanding between us.</p>
+            <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: #888; font-weight: 600; margin-top: 15px;">Time I Spent Thinking Of You</div>
+            <div class="timer-container">
+                <div class="timer-box"><div class="timer-num" id="d-days">00</div><div class="timer-label">Days</div></div>
+                <div class="timer-box"><div class="timer-num" id="d-hours">00</div><div class="timer-label">Hours</div></div>
+                <div class="timer-box"><div class="timer-num" id="d-mins">00</div><div class="timer-label">Mins</div></div>
+                <div class="timer-box"><div class="timer-num" id="d-secs">00</div><div class="timer-label">Secs</div></div>
+            </div>
+            <button class="btn" onclick="goToPage(1, 2)">Please See Next ➔</button>
+        </div>
+
+        <div class="page" id="page2">
+            <h3 style="margin-bottom: 5px;">Erase the Blur to View My Feelings</h3>
+            <p style="font-size: 0.8rem; margin-bottom: 15px;">Trace your finger smoothly across the box shield canvas below.</p>
+            <div class="scratch-container" id="scratch-box">
+                <div class="scratch-secret">
+                    <p class="shayari-text">
+                        "Narazgi tumhari sah nahi paata hoon,<br>
+                        Galti ho jati hai par gussa sah nahi paata hoon.<br>
+                        Ek baar muskura kar maaf kar do mujhe Ayushi,<br>
+                        Tumhare bina main ek pal bhi rah nahi paata hoon."
+                    </p>
+                </div>
+                <canvas id="scratch-canvas"></canvas>
+            </div>
+            <button class="btn" onclick="goToPage(2, 3)">Our Good Times ➔</button>
+        </div>
+
+        <div class="page" id="page3">
+            <h3 style="margin-bottom: 12px;">Your Smile is My Safe Place</h3>
+            <div class="gallery-container" id="gallery" onclick="changePhoto('next')">
+                <img src="Sorry.jpeg" class="photo-slide show" alt="Pic 1">
+                <img src="photo1.jpeg" class="photo-slide" alt="Pic 2">
+                <img src="photo2.jpeg" class="photo-slide" alt="Pic 3">
+            </div>
+            <p style="font-size: 0.75rem; color: #777; margin-top: 12px;">👈 Swipe left/right or Tap photo to view images 👉</p>
+            <button class="btn" onclick="goToPage(3, 4)">My Vows to You ➔</button>
+        </div>
+
+        <div class="page" id="page4">
+            <h3>My Personal Promises Vows</h3>
+            <p style="font-size: 0.8rem; color:#666;">Tap each rosebud cleanly to unlock my commitments.</p>
+            
+            <div class="vow-timeline">
+                <div class="vow-row" onclick="revealVowRow(this)">
+                    <span class="vow-btn">🌹</span>
+                    <span class="vow-text">I promise to prioritize your feelings over winning any fight.</span>
+                </div>
+                <div class="vow-row" onclick="revealVowRow(this)">
+                    <span class="vow-btn">🌹</span>
+                    <span class="vow-text">I promise to communicate transparently instead of shutting down.</span>
+                </div>
+                <div class="vow-row" onclick="revealVowRow(this)">
+                    <span class="vow-btn">🌹</span>
+                    <span class="vow-text">I promise to double the hugs whenever you feel a little upset.</span>
+                </div>
+                <div class="vow-row" onclick="revealVowRow(this)">
+                    <span class="vow-btn">🌹</span>
+                    <span class="vow-text">I promise to safeguard your beautiful smile at all costs.</span>
+                </div>
+            </div>
+            <button class="btn" id="vow-next-btn" onclick="goToPage(4, 5)" disabled>Unlock Truce Question ➔</button>
+        </div>
+
+        <div class="page" id="page5">
+            <h3 style="margin-bottom: 12px;">The Core Truce Question ❓</h3>
+            <p style="font-weight: 500; font-size: 0.92rem; color: #222; margin-bottom: 15px;">Are you ready to forgive your Husband Rajan and see his special letter note, Ayushi?</p>
+            <div style="width: 100%;">
+                <button class="quiz-option" onclick="checkQuizAnswer(false, this)">Option A: No, you need to stay in the doghouse a bit longer! 😤</button>
+                <button class="quiz-option" onclick="checkQuizAnswer(true, this)">Option B: Yes, because I love you too much to stay angry. ❤️</button>
+            </div>
+            <div id="quiz-feedback"></div>
+            <button class="btn" id="quiz-next-btn" onclick="goToPage(5, 6)" style="display: none;">Thaw My Heart ➔</button>
+        </div>
+
+        <div class="page" id="page6">
+            <h3 id="clicker-title" style="color: #444; transition: color 0.4s;">Heart Thawing Meter 🔥</h3>
+            <p style="color: #666; font-size: 0.8rem; margin: 5px 0 15px 0;">Tap the heart rapidly to melt away the remaining coldness!</p>
+            <div class="clicker-heart" id="big-heart" onclick="handleHeartClick(event)">🥺</div>
+            <h4 style="color: #5c2596; font-weight: 600;" id="click-score-hud">Melt Progress: 0%</h4>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+        </div>
+
+        <div class="page final-wish" id="page7">
+            <h2>I Love You Endless! 💖</h2>
+            <div class="typewriter-box"><span id="typewriter-text"></span><span class="cursor">|</span></div>
+            
+            <div class="contract-box">
+                <div class="truce-seal" id="truce-seal">Approved</div>
+
+                <b style="color:#5c2596;">OFFICIAL RECONCILIATION TRUCE CLAUSE:</b><br>
+                By signing below, Ayushi officially grants a full conditional pardon and unlocks her real-world reward vouchers:
+                <canvas id="sig-canvas" width="260" height="70"></canvas>
+                <div class="sig-controls"><button class="clear-btn" onclick="clearSignature()">Reset Signature</button></div>
+            </div>
+
+            <div class="coupon-deck">
+                <div class="love-coupon">🎫 Win unlimited Momos</div>
+                <div class="love-coupon">🎫 Infinite Kisses</div>
+                <div class="love-coupon">🎫 Infinite Hugs</div>
+            </div>
+            <div style="display: flex; gap: 10px; width: 100%; margin-top: auto;">
+                <button class="btn" style="flex: 1; padding: 13px 10px;" onclick="executeTruceCommitment()">Seal Contract 🔒</button>
+                <button class="btn" style="flex: 1; padding: 13px 10px; background: linear-gradient(135deg, #a8a8a8, #c8c8c8); color: #fff;" id="hug-btn" onclick="handleHugButtonClick()">Send Rajan a Hug 🤗</button>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="bg-music" loop><source id="music-src" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg"></audio>
+
+    <script>
+        const card = document.getElementById('main-card');
+        const music = document.getElementById('bg-music');
+        let isContractSealed = false; // State manager tracking verification loop status
+
+        function openCurtains() {
+            document.getElementById('curtain-wrapper').classList.add('open');
+            setTimeout(() => { document.getElementById('curtain-wrapper').style.display = 'none'; }, 1400);
+            playMusic();
+        }
+
+        function playMusic() { music.play().catch(() => {}); }
+
+        /* Mouse Tilt Parallax */
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 35; const yAxis = (window.innerHeight / 2 - e.pageY) / 35;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        /* Apology Ticking Timer */
+        const apologyStartDate = new Date(2026, 5, 5, 0, 0, 0); 
+        function updateTimer() {
+            const difference = new Date() - apologyStartDate;
+            document.getElementById('d-days').innerText = Math.floor(difference / 86400000).toString().padStart(2, '0');
+            document.getElementById('d-hours').innerText = Math.floor((difference % 86400000) / 3600000).toString().padStart(2, '0');
+            document.getElementById('d-mins').innerText = Math.floor((difference % 3600000) / 60000).toString().padStart(2, '0');
+            document.getElementById('d-secs').innerText = Math.floor((difference % 60000) / 1000).toString().padStart(2, '0');
+        }
+        setInterval(updateTimer, 1000); updateTimer();
+
+        /* Router Navigation */
+        function goToPage(curr, next) {
+            document.getElementById(`page${curr}`).classList.remove('active'); 
+            document.getElementById(`page${curr}`).classList.add('exit');
+            document.getElementById(`page${next}`).classList.add('active');
+            
+            if(next === 2) setTimeout(initScratchCard, 700);
+            if(next === 7) setTimeout(initSignatureCanvas, 100);
+        }
+
+        /* MOOD TRACKER RUNNER */
+        function trackMood(status) {
+            const resp = document.getElementById('mood-response');
+            const nextBtn = document.getElementById('mood-next-btn');
+            nextBtn.style.display = "inline-block";
+            if(status === 'angry') { resp.innerText = "🚨 High alert! Let me attempt to make you smile..."; }
+            else if(status === 'sad') { resp.innerText = "🥺 Your sadness weighs on my heart. Let me fix it..."; }
+            else { resp.innerText = "💜 Thank you for listening. Let me show you my heart..."; }
+        }
+
+        /* Scratch Card Canvas Module Box Layout Config */
+        function initScratchCard() {
+            const canvas = document.getElementById('scratch-canvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); const box = document.getElementById('scratch-box');
+            canvas.width = box.offsetWidth; canvas.height = box.offsetHeight; 
+            ctx.fillStyle = '#c5b5df'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#4a148c'; ctx.font = 'bold 13px Poppins'; ctx.textAlign = 'center'; ctx.fillText('✨ Erase with Finger to Read ✨', canvas.width / 2, canvas.height / 2 + 5);
+            
+            let drawing = false;
+            function scratch(e) { if (!drawing) return; const rect = canvas.getBoundingClientRect(); const x = (e.clientX || e.touches[0].clientX) - rect.left; const y = (e.clientY || e.touches[0].clientY) - rect.top; ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.arc(x, y, 25, 0, Math.PI * 2); ctx.fill(); }
+            canvas.addEventListener('mousedown', () => drawing = true); canvas.addEventListener('mouseup', () => drawing = false); canvas.addEventListener('mousemove', scratch);
+            canvas.addEventListener('touchstart', () => drawing = true, {passive: true}); canvas.addEventListener('touchend', () => drawing = false); canvas.addEventListener('touchmove', scratch, {passive: true});
+        }
+
+        /* Photo Album Slider */
+        let photoIdx = 0; const slides = document.querySelectorAll('.photo-slide');
+        function changePhoto(dir) { slides[photoIdx].classList.remove('show'); photoIdx = dir === 'next' ? (photoIdx + 1) % slides.length : (photoIdx - 1 + slides.length) % slides.length; slides[photoIdx].classList.add('show'); }
+        let startX = 0; const gBox = document.getElementById('gallery');
+        gBox.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; }, {passive: true});
+        gBox.addEventListener('touchend', e => { let endX = e.changedTouches[0].screenX; if (Math.abs(startX - endX) > 40) changePhoto(endX < startX ? 'next' : 'prev'); }, {passive: true});
+
+        /* TIMELINE VOW COMPLETION ENGINE */
+        let vowsRevealedCount = 0;
+        function revealVowRow(rowEl) {
+            if(rowEl.classList.contains('revealed')) return;
+            rowEl.classList.add('revealed');
+            rowEl.querySelector('.vow-btn').innerText = "💖";
+            vowsRevealedCount++;
+            if(vowsRevealedCount === 4) { document.getElementById('vow-next-btn').removeAttribute('disabled'); }
+        }
+
+        /* Quiz Checks */
+        function checkQuizAnswer(isCorrect, btnEl) {
+            const feedback = document.getElementById('quiz-feedback');
+            if (isCorrect) { feedback.innerText = "🎉 Thank you Ayushi! I promise to make everything perfect again! ❤️"; feedback.style.color = "#2a9d8f"; btnEl.style.background = "#e6f4ea"; document.getElementById('quiz-next-btn').style.display = "inline-block"; } 
+            else { feedback.innerText = "🥺 Please don't stay mad... look how sorry I am!"; feedback.style.color = "#e63946"; btnEl.style.background = "#fce8e6"; }
+        }
+
+        /* 15 Tap Clicker Gauge Meter */
+        let clickScore = 0;
+        function handleHeartClick(e) {
+            if(clickScore >= 15) return; clickScore++;
+            let percentage = Math.floor((clickScore / 15) * 100);
+            document.getElementById('click-score-hud').innerText = `Melt Progress: ${percentage}%`; document.getElementById('progress-fill').style.width = `${percentage}%`;
+            document.body.style.background = `radial-gradient(circle, rgb(255, ${230 - clickScore * 6}, ${240 - clickScore * 2}) 0%, #f3ebfa 100%)`;
+            
+            const scoreTag = document.createElement('div'); scoreTag.classList.add('floating-score'); scoreTag.innerText = "Melted ❤️";
+            scoreTag.style.left = `${e.clientX || (e.touches ? e.touches[0].clientX : 0)}px`; scoreTag.style.top = `${e.clientY || (e.touches ? e.touches[0].clientY : 0)}px`;
+            document.body.appendChild(scoreTag); setTimeout(() => scoreTag.remove(), 800);
+            if(clickScore >= 8) { document.getElementById('big-heart').innerText = "❤️"; document.getElementById('clicker-title').innerText = "Heart is Thawing out! 😍"; }
+            if(clickScore >= 15) { setTimeout(() => { goToPage(6, 7); startTypewriter(); startCelebration(); }, 500); }
+        }
+
+        /* Signature Canvas Pad Config */
+        let canvasSig, ctxSig;
+        function initSignatureCanvas() {
+            canvasSig = document.getElementById('sig-canvas'); ctxSig = canvasSig.getContext('2d'); let drawing = false; ctxSig.strokeStyle = "#5c2596"; ctxSig.lineWidth = 2.5;
+            canvasSig.width = canvasSig.offsetWidth; canvasSig.height = canvasSig.offsetHeight;
+            window.clearSignature = function() { if(ctxSig && canvasSig) ctxSig.clearRect(0, 0, canvasSig.width, canvasSig.height); };
+            function drawSig(e) { if(!drawing) return; const rect = canvasSig.getBoundingClientRect(); const x = (e.clientX || e.touches[0].clientX) - rect.left; const y = (e.clientY || e.touches[0].clientY) - rect.top; ctxSig.lineTo(x, y); ctxSig.stroke(); }
+            canvasSig.addEventListener('mousedown', () => { drawing = true; ctxSig.beginPath(); }); canvasSig.addEventListener('mousemove', drawSig); window.addEventListener('mouseup', () => drawing = false);
+            canvasSig.addEventListener('touchstart', () => { drawing = true; ctxSig.beginPath(); }, {passive: true}); canvasSig.addEventListener('touchmove', drawSig, {passive: true}); window.addEventListener('touchend', () => drawing = false);
+        }
+
+        /* Sealing Execution Handler */
+        function executeTruceCommitment() {
+            isContractSealed = true; // Flips access variable to true
+            document.getElementById('truce-seal').classList.add('stamped');
+            
+            // Adjust design styling on the hug button directly to match vibrant active states
+            const hugBtn = document.getElementById('hug-btn');
+            hugBtn.style.background = "linear-gradient(135deg, #7b1fa2, #ba68c8)";
+            hugBtn.style.boxShadow = "0 8px 20px rgba(123, 31, 162, 0.2)";
+
+            // Update modal fields dynamically to serve up the custom success notification message
+            document.getElementById('popup-title').innerText = "Truce Sealed For Eternity! ❤️";
+            document.getElementById('popup-desc').innerText = "Your official signature has been securely submitted to my heart database. Your virtual reward coupons are now active in real life, Ayushi!";
+            
+            setTimeout(() => { document.getElementById('custom-popup-overlay').classList.add('show'); }, 600);
+        }
+
+        /* HUG BUTTON CONDITION VERIFIER WRAPPER */
+        function handleHugButtonClick() {
+            if (isContractSealed) {
+                // Verification passes successfully: trigger explosion loop animations and popup image cards
+                triggerHugBurstAndPhoto();
+            } else {
+                // Verification fails: update popup modal layout dynamically with beautiful desktop warnings
+                document.getElementById('popup-title').innerText = "Signature Required! ✍️";
+                document.getElementById('popup-desc').innerText = "Please sign the contract pad with your finger and click the 'Seal Contract 🔒' button first to unlock your virtual hugs, Ayushi! 🥺";
+                
+                document.getElementById('custom-popup-overlay').classList.add('show');
+            }
+        }
+
+        function closeCustomPopup() { document.getElementById('custom-popup-overlay').classList.remove('show'); }
+
+        /* FEATURE 3: SEND RAJAN A HUG BURST AND PHOTO POPUP */
+        function triggerHugBurstAndPhoto() {
+            const elements = ['❤️', '🤗', '💋', '💖', '✨', '💋', '❤️'];
+
+            for(let i=0; i<35; i++) {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.classList.add('flying-element');
+                    item.innerText = elements[Math.floor(Math.random() * elements.length)];
+                    item.style.left = Math.random() * 100 + 'vw';
+                    item.style.setProperty('--randomX', (Math.random() * 500 - 250) + 'px');
+                    item.style.setProperty('--randomRotate', (Math.random() * 720 - 360) + 'deg');
+                    item.style.fontSize = Math.random() * (55 - 20) + 20 + 'px';
+                    item.style.animationDuration = Math.random() * (4 - 2) + 2 + 's';
+                    document.body.appendChild(item);
+                    setTimeout(() => item.remove(), 4500);
+                }, i * 35);
+            }
+
+            const photoContainer = document.getElementById('surprise-photo-container');
+            const cardContainer = document.getElementById('main-card');
+            
+            cardContainer.style.opacity = '0.3';
+            photoContainer.style.display = 'flex';
+            setTimeout(() => { photoContainer.classList.add('show'); }, 50);
+
+            setTimeout(() => {
+                photoContainer.classList.remove('show');
+                cardContainer.style.opacity = '1';
+                setTimeout(() => { photoContainer.style.display = 'none'; }, 1000);
+            }, 6000);
+        }
+
+        /* Typewriter Note Letter Script */
+        const loveLetterText = "I am deeply sorry for letting my mood get in the way of our happiness, Ayushi. You mean the absolute world to me, and seeing you upset breaks my heart completely. Thank you for your patience, your grace, and your infinite love. I promise to step up, understand better, and protect your precious smile at all costs. I love you, always. ❤️";
+        let charIdx = 0;
+        function startTypewriter() { if (charIdx < loveLetterText.length) { document.getElementById('typewriter-text').innerHTML += loveLetterText.charAt(charIdx); charIdx++; setTimeout(startTypewriter, 45); } }
+
+        /* Finale Ambient Flying Sparkles Loop */
+        function startCelebration() {
+            const elements = ['❤️', '✨', '💜', '🌸', '💖'];
+            setInterval(() => {
+                const item = document.createElement('div'); item.classList.add('flying-element'); item.innerText = elements[Math.floor(Math.random() * elements.length)];
+                item.style.left = Math.random() * 100 + 'vw'; item.style.setProperty('--randomX', (Math.random() * 300 - 150) + 'px'); item.style.setProperty('--randomRotate', (Math.random() * 720 - 360) + 'deg');
+                item.style.fontSize = Math.random() * (28 - 16) + 16 + 'px'; item.style.animationDuration = Math.random() * (5 - 3.5) + 3.5 + 's';
+                document.body.appendChild(item); setTimeout(() => item.remove(), 5000);
+            }, 150);
+        }
+    </script>
+</body>
+</html>
+
+```
