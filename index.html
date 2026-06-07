@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -177,7 +176,7 @@
         }
         .truce-seal.stamped { display: flex; opacity: 0.85; transform: rotate(-20deg) scale(1); }
 
-        /* CUSTOM SUCCESS/WARNING POPUP WINDOW MODALS */
+        /* CUSTOM MODAL POPUP */
         #custom-popup-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(59, 29, 94, 0.3); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
@@ -186,7 +185,7 @@
         }
         .popup-card {
             background: rgba(255, 255, 255, 0.9); padding: 30px; border-radius: 28px;
-            width: 85%; max-width: 350px; text-align: center;
+            width: 85%; max-width: 360px; text-align: center;
             box-shadow: 0 20px 50px rgba(92, 37, 150, 0.2);
             border: 1px solid rgba(255,255,255,0.6);
             transform: scale(0.85); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -195,6 +194,13 @@
         #custom-popup-overlay.show .popup-card { transform: scale(1); }
         .popup-card h2 { color: #5c2596; font-size: 1.6rem; margin-bottom: 10px; font-family: 'Dancing Script', cursive; }
         .popup-card p { font-size: 0.88rem; color: #555; margin-bottom: 20px; line-height: 1.5; }
+        
+        /* PREMIUM STYLE FOR FINALE LOVE SHAYARI */
+        .popup-card .shayari-finale {
+            font-style: italic; font-weight: 500; font-size: 0.95rem; color: #4a148c;
+            line-height: 1.7; background: #faf5ff; border: 1px dashed #d1c4e9;
+            padding: 15px; border-radius: 20px; margin-top: 15px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.01);
+        }
 
         /* SURPRISE HAPPY PHOTO POPUP MODAL FRAME */
         #surprise-photo-container {
@@ -226,16 +232,33 @@
         .typewriter-box { min-height: 50px; color: #333; font-size: 0.84rem; line-height: 1.4; font-weight: 500; }
         .cursor { display: inline-block; width: 2px; background-color: #5c2596; animation: blink 0.7s infinite; }
 
-        /* Keyframes */
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes blink { 50% { opacity: 0; } }
-        .flying-element { position: absolute; bottom: -50px; pointer-events: none; animation: flyUp 4.5s linear infinite; z-index: 100; }
-        @keyframes flyUp {
+        /* BACKGROUND SPARKLES DEFAULT ENGINE */
+        .ambient-sparkle { position: absolute; bottom: -50px; pointer-events: none; animation: flyUpAmbient 5s linear infinite; opacity: 0.25; z-index: 5; }
+        @keyframes flyUpAmbient {
             0% { transform: translateY(0) translateX(0) rotate(0deg) scale(0.6); opacity: 0; }
-            15% { opacity: 1; }
-            100% { transform: translateY(-115vh) translateX(var(--randomX)) rotate(var(--randomRotate)) scale(1.2); opacity: 0; }
+            20% { opacity: 0.25; }
+            100% { transform: translateY(-115vh) translateX(var(--randomX)) rotate(var(--randomRotate)) scale(1.1); opacity: 0; }
         }
+
+        /* HIGH-CONTRAST FULL BRIGHTNESS ANIMATION SYSTEM FOR HUG ENGINES */
+        .hug-burst-element { 
+            position: absolute; 
+            bottom: -60px; 
+            pointer-events: none; 
+            animation: flyUpExplosion 6s cubic-bezier(0.15, 0.45, 0.35, 1) forwards;
+            opacity: 1 !important; 
+            z-index: 2000; 
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15)); 
+        }
+        @keyframes flyUpExplosion {
+            0% { transform: translateY(0) translateX(0) rotate(0deg) scale(0.5); opacity: 1; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-125vh) translateX(var(--randomX)) rotate(var(--randomRotate)) scale(1.6); opacity: 0; }
+        }
+
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes blink { 50% { opacity: 0; } }
         @keyframes floatUpScore { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-60px) scale(1.15); } }
     </style>
 </head>
@@ -253,11 +276,13 @@
         <div class="curtain-panel curtain-right"></div>
     </div>
 
-    <div id="custom-popup-overlay" onclick="closeCustomPopup()">
+    <div id="custom-popup-overlay">
         <div class="popup-card" onclick="event.stopPropagation()">
             <h2 id="popup-title">Truce Sealed For Eternity! ❤️</h2>
             <p id="popup-desc">Your official signature has been securely submitted to my heart database. Your virtual reward coupons are now active in real life, Ayushi!</p>
-            <button class="btn" style="margin: 0; background: linear-gradient(135deg, #3c1670, #5c2596);" onclick="closeCustomPopup()">Got it 🔒</button>
+            <div id="popup-action-area">
+                <button class="btn" style="margin: 0; background: linear-gradient(135deg, #3c1670, #5c2596);" onclick="closeCustomPopup()">Got it 🔒</button>
+            </div>
         </div>
     </div>
 
@@ -329,15 +354,19 @@
             <div class="vow-timeline">
                 <div class="vow-row" onclick="revealVowRow(this)">
                     <span class="vow-btn">🌹</span>
-                    <span class="vow-text">I promise to prioritize your feelings over winning any fight.</span>
+                    <span class="vow-text">I never want to hurt you, fact is that i can't see tear in your eyes ,this is the our worst phase.</span>
                 </div>
                 <div class="vow-row" onclick="revealVowRow(this)">
                     <span class="vow-btn">🌹</span>
-                    <span class="vow-text">I promise to communicate transparently instead of shutting down.</span>
+                    <span class="vow-text">I don't know why are you angry to me from the last 3 days.</span>
                 </div>
                 <div class="vow-row" onclick="revealVowRow(this)">
                     <span class="vow-btn">🌹</span>
-                    <span class="vow-text">I promise to double the hugs whenever you feel a little upset.</span>
+                    <span class="vow-text">If i have done anything please let me know i will improve myself, but never stop texting me my eyes is full of tear from the last two day.</span>
+                </div>
+                <div class="vow-row" onclick="revealVowRow(this)">
+                    <span class="vow-btn">🌹</span>
+                    <span class="vow-text">I am requesting you , please aise mat jaya kro bol k ki "Baad me krte hai" you know it verry well ki mai nhi reh pata hu phir bhi aap nhi krti ho msg, please sambhal lo mujhe🥺.</span>
                 </div>
                 <div class="vow-row" onclick="revealVowRow(this)">
                     <span class="vow-btn">🌹</span>
@@ -392,12 +421,12 @@
 
     </div>
 
-    <audio id="bg-music" loop><source id="music-src" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg"></audio>
+    <audio id="bg-music" loop><source id="music-src" src="song.mp3" type="audio/mpeg"></audio>
 
     <script>
         const card = document.getElementById('main-card');
         const music = document.getElementById('bg-music');
-        let isContractSealed = false; // State manager tracking verification loop status
+        let isContractSealed = false; 
 
         function openCurtains() {
             document.getElementById('curtain-wrapper').classList.add('open');
@@ -424,7 +453,7 @@
         }
         setInterval(updateTimer, 1000); updateTimer();
 
-        /* Router Navigation */
+        /* Navigation router loops */
         function goToPage(curr, next) {
             document.getElementById(`page${curr}`).classList.remove('active'); 
             document.getElementById(`page${curr}`).classList.add('exit');
@@ -444,7 +473,7 @@
             else { resp.innerText = "💜 Thank you for listening. Let me show you my heart..."; }
         }
 
-        /* Scratch Card Canvas Module Box Layout Config */
+        /* Scratch Card Canvas Module Config */
         function initScratchCard() {
             const canvas = document.getElementById('scratch-canvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); const box = document.getElementById('scratch-box');
             canvas.width = box.offsetWidth; canvas.height = box.offsetHeight; 
@@ -464,14 +493,14 @@
         gBox.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; }, {passive: true});
         gBox.addEventListener('touchend', e => { let endX = e.changedTouches[0].screenX; if (Math.abs(startX - endX) > 40) changePhoto(endX < startX ? 'next' : 'prev'); }, {passive: true});
 
-        /* TIMELINE VOW COMPLETION ENGINE */
+        /* TIMELINE VOW REVEAL ENGINE */
         let vowsRevealedCount = 0;
         function revealVowRow(rowEl) {
             if(rowEl.classList.contains('revealed')) return;
             rowEl.classList.add('revealed');
             rowEl.querySelector('.vow-btn').innerText = "💖";
             vowsRevealedCount++;
-            if(vowsRevealedCount === 4) { document.getElementById('vow-next-btn').removeAttribute('disabled'); }
+            if(vowsRevealedCount === 5) { document.getElementById('vow-next-btn').removeAttribute('disabled'); }
         }
 
         /* Quiz Checks */
@@ -509,55 +538,63 @@
 
         /* Sealing Execution Handler */
         function executeTruceCommitment() {
-            isContractSealed = true; // Flips access variable to true
+            isContractSealed = true; 
             document.getElementById('truce-seal').classList.add('stamped');
             
-            // Adjust design styling on the hug button directly to match vibrant active states
             const hugBtn = document.getElementById('hug-btn');
             hugBtn.style.background = "linear-gradient(135deg, #7b1fa2, #ba68c8)";
             hugBtn.style.boxShadow = "0 8px 20px rgba(123, 31, 162, 0.2)";
 
-            // Update modal fields dynamically to serve up the custom success notification message
             document.getElementById('popup-title').innerText = "Truce Sealed For Eternity! ❤️";
             document.getElementById('popup-desc').innerText = "Your official signature has been securely submitted to my heart database. Your virtual reward coupons are now active in real life, Ayushi!";
+            document.getElementById('popup-action-area').innerHTML = `<button class="btn" style="margin: 0; background: linear-gradient(135deg, #3c1670, #5c2596);" onclick="closeCustomPopup()">Got it 🔒</button>`;
             
-            setTimeout(() => { document.getElementById('custom-popup-overlay').classList.add('show'); }, 600);
+            setTimeout(() => { document.getElementById('custom-popup-overlay').style.display = 'flex'; setTimeout(() => { document.getElementById('custom-popup-overlay').classList.add('show'); }, 50); }, 600);
         }
 
         /* HUG BUTTON CONDITION VERIFIER WRAPPER */
         function handleHugButtonClick() {
             if (isContractSealed) {
-                // Verification passes successfully: trigger explosion loop animations and popup image cards
                 triggerHugBurstAndPhoto();
             } else {
-                // Verification fails: update popup modal layout dynamically with beautiful desktop warnings
                 document.getElementById('popup-title').innerText = "Signature Required! ✍️";
                 document.getElementById('popup-desc').innerText = "Please sign the contract pad with your finger and click the 'Seal Contract 🔒' button first to unlock your virtual hugs, Ayushi! 🥺";
-                
-                document.getElementById('custom-popup-overlay').classList.add('show');
+                document.getElementById('popup-action-area').innerHTML = `<button class="btn" style="margin: 0; background: linear-gradient(135deg, #3c1670, #5c2596);" onclick="closeCustomPopup()">Got it 🔒</button>`;
+                document.getElementById('custom-popup-overlay').style.display = 'flex';
+                setTimeout(() => { document.getElementById('custom-popup-overlay').classList.add('show'); }, 50);
             }
         }
 
-        function closeCustomPopup() { document.getElementById('custom-popup-overlay').classList.remove('show'); }
+        function closeCustomPopup() { 
+            document.getElementById('custom-popup-overlay').classList.remove('show'); 
+            setTimeout(() => { document.getElementById('custom-popup-overlay').style.display = 'none'; }, 400);
+        }
 
-        /* FEATURE 3: SEND RAJAN A HUG BURST AND PHOTO POPUP */
+        /* SYNCHRONIZED HIGH-VISIBILITY EXPLOSION ENGINE RUNNER WITH FINAL LOVE SHAYARI SCREEN */
+        let explosionInterval;
         function triggerHugBurstAndPhoto() {
-            const elements = ['❤️', '🤗', '💋', '💖', '✨', '💋', '❤️'];
+            const burstPool = ['❤️', '🤗', '💋', '💖', '💋', '💖', '❤️'];
+            clearInterval(explosionInterval);
 
-            for(let i=0; i<35; i++) {
-                setTimeout(() => {
-                    const item = document.createElement('div');
-                    item.classList.add('flying-element');
-                    item.innerText = elements[Math.floor(Math.random() * elements.length)];
-                    item.style.left = Math.random() * 100 + 'vw';
-                    item.style.setProperty('--randomX', (Math.random() * 500 - 250) + 'px');
-                    item.style.setProperty('--randomRotate', (Math.random() * 720 - 360) + 'deg');
-                    item.style.fontSize = Math.random() * (55 - 20) + 20 + 'px';
-                    item.style.animationDuration = Math.random() * (4 - 2) + 2 + 's';
-                    document.body.appendChild(item);
-                    setTimeout(() => item.remove(), 4500);
-                }, i * 35);
-            }
+            let generationCount = 0;
+            explosionInterval = setInterval(() => {
+                if (generationCount >= 55) { 
+                    clearInterval(explosionInterval);
+                    return;
+                }
+                
+                const item = document.createElement('div');
+                item.classList.add('hug-burst-element');
+                item.innerText = burstPool[Math.floor(Math.random() * burstPool.length)];
+                item.style.left = (Math.random() * 90 + 5) + 'vw'; 
+                item.style.setProperty('--randomX', (Math.random() * 400 - 200) + 'px');
+                item.style.setProperty('--randomRotate', (Math.random() * 720 - 360) + 'deg');
+                item.style.fontSize = Math.random() * (50 - 28) + 28 + 'px'; 
+                document.body.appendChild(item);
+                
+                setTimeout(() => { item.remove(); }, 3500);
+                generationCount++;
+            }, 100);
 
             const photoContainer = document.getElementById('surprise-photo-container');
             const cardContainer = document.getElementById('main-card');
@@ -566,11 +603,37 @@
             photoContainer.style.display = 'flex';
             setTimeout(() => { photoContainer.classList.add('show'); }, 50);
 
+            // Synchronize photo hide step and deploy final static message frame
             setTimeout(() => {
                 photoContainer.classList.remove('show');
                 cardContainer.style.opacity = '1';
-                setTimeout(() => { photoContainer.style.display = 'none'; }, 1000);
+                setTimeout(() => { 
+                    photoContainer.style.display = 'none'; 
+                    triggerFinalLoveMessageCard(); // Display beautiful final card dialogue
+                }, 1000);
             }, 6000);
+        }
+
+        /* DYNAMIC FINALE DISPLAY CARD WITH HINDI SHAYARI */
+        function triggerFinalLoveMessageCard() {
+            document.getElementById('popup-title').innerText = "For My World, Ayushi... ❤️";
+            
+            // Injected dynamic layout configuration setup housing your custom message and Hindi Shayari
+            document.getElementById('popup-desc').innerHTML = `
+                I am so incredibly happy that we mended this together. No matter how tough the day gets, you are my absolute peace and home. I never ever want to see you sad or silent again.<br>
+                <div class="shayari-finale">
+                    "Tumhaari ek muskaan se badal jata hai mera jahaan,<br>
+                    Ab kabhi judaa mat hona tum se hai meri jaan.<br>
+                    Sari galtiyaan maaf karke gale se laga lo mujhe,<br>
+                    Tum hi thi, tum hi ho, aur tum hi rahogi meri jahaan." ❤️
+                </div>
+            `;
+            
+            // Clean close button layout interface mapping wrapper
+            document.getElementById('popup-action-area').innerHTML = `<button class="btn" style="margin: 20px auto 0 auto; display: block;" onclick="closeCustomPopup()">Close 🔒</button>`;
+            
+            document.getElementById('custom-popup-overlay').style.display = 'flex';
+            setTimeout(() => { document.getElementById('custom-popup-overlay').classList.add('show'); }, 50);
         }
 
         /* Typewriter Note Letter Script */
@@ -578,18 +641,16 @@
         let charIdx = 0;
         function startTypewriter() { if (charIdx < loveLetterText.length) { document.getElementById('typewriter-text').innerHTML += loveLetterText.charAt(charIdx); charIdx++; setTimeout(startTypewriter, 45); } }
 
-        /* Finale Ambient Flying Sparkles Loop */
+        /* Persistent background ambient sparkles loop layout */
         function startCelebration() {
             const elements = ['❤️', '✨', '💜', '🌸', '💖'];
             setInterval(() => {
-                const item = document.createElement('div'); item.classList.add('flying-element'); item.innerText = elements[Math.floor(Math.random() * elements.length)];
+                const item = document.createElement('div'); item.classList.add('ambient-sparkle'); item.innerText = elements[Math.floor(Math.random() * elements.length)];
                 item.style.left = Math.random() * 100 + 'vw'; item.style.setProperty('--randomX', (Math.random() * 300 - 150) + 'px'); item.style.setProperty('--randomRotate', (Math.random() * 720 - 360) + 'deg');
-                item.style.fontSize = Math.random() * (28 - 16) + 16 + 'px'; item.style.animationDuration = Math.random() * (5 - 3.5) + 3.5 + 's';
-                document.body.appendChild(item); setTimeout(() => item.remove(), 5000);
-            }, 150);
+                item.style.fontSize = Math.random() * (24 - 14) + 14 + 'px'; item.style.animationDuration = Math.random() * (6 - 4) + 4 + 's';
+                document.body.appendChild(item); setTimeout(() => item.remove(), 5500);
+            }, 180);
         }
     </script>
 </body>
 </html>
-
-```
